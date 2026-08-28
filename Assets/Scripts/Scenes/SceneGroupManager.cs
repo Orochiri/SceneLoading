@@ -74,7 +74,7 @@ namespace System.SceneManagement
                 if (!sceneAt.isLoaded) continue;
 
                 var sceneName = sceneAt.name;
-                if (sceneName.Equals(activeScene) || sceneName == "BaseScene") continue;
+                if (sceneName.Equals(activeScene) || sceneName == "Bootstrapper") continue;
                 scenes.Add(sceneName);
             }
             

@@ -76,7 +76,6 @@ namespace System.SceneManagement
             }
             
             var scenes = new List<string>();
-            var activeScene = SceneManager.GetActiveScene().name;
 
             int sceneCount = SceneManager.sceneCount;
 
@@ -86,7 +85,7 @@ namespace System.SceneManagement
                 if (!sceneAt.isLoaded) continue;
 
                 var sceneName = sceneAt.name;
-                if (sceneName.Equals(activeScene) || sceneName == "Bootstrapper" || scenesToLoad.Contains(sceneName)) continue;
+                if (sceneName == "Bootstrapper" || scenesToLoad.Contains(sceneName)) continue;
                 scenes.Add(sceneName);
             }
             

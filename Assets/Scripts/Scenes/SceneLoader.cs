@@ -50,7 +50,7 @@ namespace System.SceneManagement
             
         }
         
-        public async void StartGame(int startScene) 
+        public async void LoadScene(int startScene) 
         {
             await LoadSceneGroup(startScene, true);
         }

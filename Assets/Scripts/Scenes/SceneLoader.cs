@@ -1,7 +1,6 @@
 using UnityEngine;
 using System;
 using System.Threading.Tasks;
-using UnityEngine;
 using UnityEngine.UI;
 
 namespace System.SceneManagement
@@ -18,9 +17,16 @@ namespace System.SceneManagement
         private bool isLoading;
 
         public readonly SceneGroupManager manager = new SceneGroupManager();
+        
+        public static SceneLoader Instance { get; private set; }
 
         private void Awake()
         {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            
             manager.OnSceneLoaded += sceneName => Debug.Log("Loaded: " + sceneName);
             manager.OnSceneUnloaded += sceneName => Debug.Log("Unloaded: " + sceneName);
             manager.OnSceneGroupLoaded += () => Debug.Log("Scene group loaded");
@@ -28,7 +34,7 @@ namespace System.SceneManagement
 
         private async void Start()
         {
-            await LoadSceneGroup(0);
+            await LoadSceneGroup(0, true);
         }
 
         private void Update()
@@ -43,8 +49,18 @@ namespace System.SceneManagement
             loadingBar.fillAmount = Mathf.Lerp(currentFillAmount, targetProgress, Time.deltaTime * dynamicFillSpeed);
             
         }
+        
+        public async void StartGame(int startScene) 
+        {
+            await LoadSceneGroup(startScene, true);
+        }
+        
+        public void QuitGame()
+        {
+            Application.Quit();
+        }
 
-        public async Task LoadSceneGroup(int index)
+        public async Task LoadSceneGroup(int index, bool loadingScreen)
         {
             loadingBar.fillAmount = 0f;
             targetProgress = 1f;
@@ -57,10 +73,17 @@ namespace System.SceneManagement
 
             LoadingProgress progress = new LoadingProgress();
             progress.Progressed += target => targetProgress = Mathf.Max(target, targetProgress);
-            
-            EnableLoadingCanvas();
-            await manager.LoadScenes(sceneGroups[index], progress);
-            EnableLoadingCanvas(false);
+
+            if (loadingScreen)
+            {
+                EnableLoadingCanvas();
+                await manager.LoadScenes(sceneGroups[index], progress, loadingScreen);
+                EnableLoadingCanvas(false);
+            }
+            else
+            {
+                await manager.LoadScenes(sceneGroups[index], progress, loadingScreen);
+            }
         }
 
         void EnableLoadingCanvas(bool enable = true)

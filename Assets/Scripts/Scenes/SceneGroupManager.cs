@@ -14,12 +14,12 @@ namespace System.SceneManagement
 
         private SceneGroup ActiveSceneGroup;
 
-        public async Task LoadScenes(SceneGroup group, IProgress<float> progress, bool reloadDupScene = false)
+        public async Task LoadScenes(SceneGroup group, IProgress<float> progress, bool loadingScreen, bool reloadDupScene = false)
         {
             ActiveSceneGroup = group;
             var loadedScenes = new List<string>();
 
-            await UnLoadScenes();
+            await UnLoadScenes(group);
 
             int sceneCount = SceneManager.sceneCount;
 
@@ -38,6 +38,9 @@ namespace System.SceneManagement
                 if (reloadDupScene == false && loadedScenes.Contains(sceneData.Name)) continue;
 
                 var operation = SceneManager.LoadSceneAsync(sceneData.Reference.Path, LoadSceneMode.Additive);
+
+                // enable the next line if you want a longer loadingScreen where you can actually see the bar load :)
+                // if (loadingScreen) await Task.Delay(TimeSpan.FromSeconds(2.5f));
                 
                 operationGroup.Operations.Add(operation);
                 
@@ -61,8 +64,17 @@ namespace System.SceneManagement
             OnSceneGroupLoaded.Invoke();
         }
 
-        public async Task UnLoadScenes()
+        public async Task UnLoadScenes(SceneGroup group)
         {
+            var scenesToLoad = new List<String>();
+            var sceneToLoadCount = group.Scenes.Count;
+            
+            for (int i = 0; i < sceneToLoadCount; i++)
+            {
+                var sceneData = group.Scenes[i];
+                scenesToLoad.Add(sceneData.Name);
+            }
+            
             var scenes = new List<string>();
             var activeScene = SceneManager.GetActiveScene().name;
 
@@ -74,7 +86,7 @@ namespace System.SceneManagement
                 if (!sceneAt.isLoaded) continue;
 
                 var sceneName = sceneAt.name;
-                if (sceneName.Equals(activeScene) || sceneName == "Bootstrapper") continue;
+                if (sceneName.Equals(activeScene) || sceneName == "Bootstrapper" || scenesToLoad.Contains(sceneName)) continue;
                 scenes.Add(sceneName);
             }
             

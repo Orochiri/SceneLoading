@@ -23,6 +23,6 @@ namespace System.SceneManagement
         public string Name => Reference.Name;
         public SceneType SceneType;
     }
-    public enum SceneType { ActiveScene, MianMenu, UserInterface, HUD, Environment, Tooling}
+    public enum SceneType { ActiveScene, MainMenu, UserInterface, HUD, Environment, Tooling}
 }
 

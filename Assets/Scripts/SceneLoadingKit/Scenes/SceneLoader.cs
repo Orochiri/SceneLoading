@@ -54,11 +54,6 @@ namespace System.SceneManagement
         {
             await LoadSceneGroup(startScene, true);
         }
-        
-        public void QuitGame()
-        {
-            Application.Quit();
-        }
 
         public async Task LoadSceneGroup(int index, bool loadingScreen)
         {
